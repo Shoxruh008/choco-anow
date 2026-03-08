@@ -10,42 +10,29 @@ function getServiceClient() {
 }
 
 function isAdmin(req: NextApiRequest): boolean {
-  const token = req.headers['x-admin-token'];
-  const adminPassword = process.env.ADMIN_PASSWORD || 'shox123';
-  return token === adminPassword;
+  return req.headers['x-admin-token'] === (process.env.ADMIN_PASSWORD || 'shox123');
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!isAdmin(req)) {
-    return res.status(401).json({ message: 'Ruxsat yo\'q' });
-  }
+  if (!isAdmin(req)) return res.status(401).json({ message: "Ruxsat yo'q" });
 
   const supabase = getServiceClient();
 
-  // GET - list all
   if (req.method === 'GET') {
     const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-
+      .from('products').select('*').order('created_at', { ascending: false });
     if (error) return res.status(500).json({ message: error.message });
     return res.status(200).json({ products: data });
   }
 
-  // POST - create new
   if (req.method === 'POST') {
-    const { name, description, price, old_price, image_url } = req.body;
-
-    if (!name?.trim()) {
-      return res.status(400).json({ message: 'Mahsulot nomi kiritilishi shart' });
-    }
+    const { name, description, price, old_price, image_url, image_url_2, image_url_3, image_url_4, image_url_5 } = req.body;
+    if (!name?.trim()) return res.status(400).json({ message: 'Mahsulot nomi kiritilishi shart' });
 
     const { data, error } = await supabase
       .from('products')
-      .insert([{ name, description, price, old_price, image_url }])
-      .select()
-      .single();
+      .insert([{ name, description, price, old_price, image_url, image_url_2, image_url_3, image_url_4, image_url_5 }])
+      .select().single();
 
     if (error) return res.status(500).json({ message: error.message });
     return res.status(201).json({ product: data });
