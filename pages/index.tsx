@@ -44,7 +44,7 @@ export default function Home({ products }: Props) {
             <div className={styles.logo}>
               <span className={styles.logoIcon}>🍫</span>
               <div>
-                <span className={styles.logoText}>Chocoa</span>
+                <span className={styles.logoText}>Chocoanow</span>
                 <span className={styles.logoSub}>Shirinliklar Do'koni</span>
               </div>
             </div>
@@ -174,7 +174,7 @@ export default function Home({ products }: Props) {
         <footer className={styles.footer}>
           <div className="container">
             <div className={styles.footerInner}>
-              <span>© 2024 Chocoa. Barcha huquqlar himoyalangan.</span>
+              <span>© 2026 Chocoanow. Barcha huquqlar himoyalangan.</span>
               <div className={styles.footerLinks}>
                 <a href="tel:+998993413373">+998 99 341 33 73</a>
                 <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer">Telegram</a>
