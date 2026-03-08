@@ -19,3 +19,18 @@ export type Product = {
   created_at: string;
   updated_at: string;
 };
+
+export type Promo = {
+  id: number;
+  title: string;
+  text: string;
+  btn1_text: string;
+  btn1_url: string;
+  btn2_text: string;
+  btn2_url: string;
+  emoji1: string;
+  emoji2: string;
+  emoji3: string;
+  emoji4: string;
+  visible: boolean;
+};

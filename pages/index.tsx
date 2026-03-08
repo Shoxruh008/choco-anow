@@ -2,13 +2,26 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
-import { supabase, Product } from '../lib/supabase';
+import { supabase, Product, Promo } from '../lib/supabase';
 import { formatPrice } from '../lib/format';
 import styles from '../styles/Home.module.css';
 
-type Props = { products: Product[] };
+type Props = { products: Product[]; promo: Promo | null };
 
-export default function Home({ products }: Props) {
+const DEFAULT_PROMO: Promo = {
+  id: 1,
+  title: "Ko'proq mahsulotlar tez orada!",
+  text: "Hozircha 10–15 ta mahsulot bilan tanishib chiqing. Yaqin kunlarda qolgan barcha mahsulotlarni huddi o'zingiz xohlaganidek — rasmlar va tavsiflar bilan — saytga qo'shamiz. Yangilanishlarni kuzatib boring!",
+  btn1_text: "Telegram kanalga obuna bo'ling",
+  btn1_url: "https://t.me/Chocoanoww",
+  btn2_text: "Qo'ng'iroq qiling",
+  btn2_url: "tel:+998993413373",
+  emoji1: "🍓", emoji2: "🍫", emoji3: "🍬", emoji4: "🎁",
+  visible: true,
+};
+
+export default function Home({ products, promo }: Props) {
+  const p = promo || DEFAULT_PROMO;
   const [lightbox, setLightbox] = useState<{ product: Product; imgIndex: number } | null>(null);
 
   const closeLightbox = useCallback(() => setLightbox(null), []);
@@ -26,8 +39,8 @@ export default function Home({ products }: Props) {
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, [lightbox, closeLightbox]);
 
-  function getImages(p: Product): string[] {
-    return [p.image_url, p.image_url_2, p.image_url_3, p.image_url_4, p.image_url_5].filter(Boolean) as string[];
+  function getImages(prod: Product): string[] {
+    return [prod.image_url, prod.image_url_2, prod.image_url_3, prod.image_url_4, prod.image_url_5].filter(Boolean) as string[];
   }
 
   function nextImg() {
@@ -96,7 +109,7 @@ export default function Home({ products }: Props) {
             ) : (
               <div className={styles.grid}>
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} onImageClick={(p, i) => setLightbox({ product: p, imgIndex: i })} />
+                  <ProductCard key={product.id} product={product} onImageClick={(prod, i) => setLightbox({ product: prod, imgIndex: i })} />
                 ))}
               </div>
             )}
@@ -104,37 +117,39 @@ export default function Home({ products }: Props) {
         </section>
 
         {/* PROMO POST */}
-        <section className={styles.promoSection}>
-          <div className="container">
-            <div className={styles.promoCard}>
-              <div className={styles.promoLeft}>
-                <span className={styles.promoTag}>📢 E'lon</span>
-                <h2 className={styles.promoTitle}>Ko'proq mahsulotlar tez orada!</h2>
-                <p className={styles.promoText}>
-                  Hozircha 10–15 ta mahsulot bilan tanishib chiqing. Yaqin kunlarda qolgan barcha mahsulotlarni
-                  huddi o'zingiz xohlaganidek — rasmlar va tavsiflar bilan — saytga qo'shamiz.
-                  Yangilanishlarni kuzatib boring!
-                </p>
-                <div className={styles.promoBtns}>
-                  <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer" className={styles.promoBtn}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                    Telegram kanalga obuna bo'ling
-                  </a>
-                  <a href="tel:+998993413373" className={styles.promoBtnSecondary}>
-                    Qo'ng'iroq qiling
-                  </a>
+        {p.visible && (
+          <section className={styles.promoSection}>
+            <div className="container">
+              <div className={styles.promoCard}>
+                <div className={styles.promoLeft}>
+                  <span className={styles.promoTag}>📢 E'lon</span>
+                  <h2 className={styles.promoTitle}>{p.title}</h2>
+                  <p className={styles.promoText}>{p.text}</p>
+                  <div className={styles.promoBtns}>
+                    {p.btn1_text && p.btn1_url && (
+                      <a href={p.btn1_url} target={p.btn1_url.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className={styles.promoBtn}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                        {p.btn1_text}
+                      </a>
+                    )}
+                    {p.btn2_text && p.btn2_url && (
+                      <a href={p.btn2_url} target={p.btn2_url.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className={styles.promoBtnSecondary}>
+                        {p.btn2_text}
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className={styles.promoRight}>
-                <div className={styles.promoEmojis}>
-                  <span>🍓</span><span>🍫</span><span>🍬</span><span>🎁</span>
+                <div className={styles.promoRight}>
+                  <div className={styles.promoEmojis}>
+                    {[p.emoji1, p.emoji2, p.emoji3, p.emoji4].map((em, i) => em && <span key={i}>{em}</span>)}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* CONTACT */}
         <section id="contact" className={styles.contact}>
@@ -203,28 +218,19 @@ export default function Home({ products }: Props) {
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-
             <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
               <div className={styles.lightboxImageWrap}>
                 <Image src={imgs[cur]} alt={lightbox.product.name} fill sizes="(max-width: 768px) 100vw, 80vw" style={{ objectFit: 'contain' }} priority/>
                 {imgs.length > 1 && (
                   <>
-                    <button className={styles.lbPrev} onClick={prevImg} aria-label="Oldingi">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-                    </button>
-                    <button className={styles.lbNext} onClick={nextImg} aria-label="Keyingi">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                    </button>
+                    <button className={styles.lbPrev} onClick={prevImg}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+                    <button className={styles.lbNext} onClick={nextImg}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
                     <div className={styles.lbDots}>
-                      {imgs.map((_, i) => (
-                        <button key={i} className={i === cur ? styles.lbDotActive : styles.lbDot}
-                          onClick={() => setLightbox({ ...lightbox, imgIndex: i })}/>
-                      ))}
+                      {imgs.map((_, i) => <button key={i} className={i === cur ? styles.lbDotActive : styles.lbDot} onClick={() => setLightbox({ ...lightbox, imgIndex: i })}/>)}
                     </div>
                   </>
                 )}
               </div>
-
               <div className={styles.lightboxInfo}>
                 <h3 className={styles.lightboxName}>{lightbox.product.name}</h3>
                 {lightbox.product.description && <p className={styles.lightboxDesc}>{lightbox.product.description}</p>}
@@ -271,7 +277,10 @@ function ProductCard({ product, onImageClick }: { product: Product; onImageClick
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const { data: products, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-  if (error) { console.error('Products fetch error:', error); return { props: { products: [] } }; }
-  return { props: { products: products || [] } };
+  const [{ data: products, error }, { data: promo }] = await Promise.all([
+    supabase.from('products').select('*').order('created_at', { ascending: false }),
+    supabase.from('promo').select('*').eq('id', 1).single(),
+  ]);
+  if (error) console.error('Products fetch error:', error);
+  return { props: { products: products || [], promo: promo || null } };
 };
