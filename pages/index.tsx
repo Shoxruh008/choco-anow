@@ -13,7 +13,7 @@ export default function Home({ products }: Props) {
   return (
     <>
       <Head>
-        <title>Chocoa — Shirinliklar Do'koni</title>
+        <title>Chocoanow — Shirinliklar Do'koni</title>
         <meta name="description" content="Eng mazali shirinliklar va konfetlar. Sinabog' 16 etajlik dom." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -49,7 +49,7 @@ export default function Home({ products }: Props) {
               <em>shirin bo'lsin</em>
             </h1>
             <p className={styles.heroDesc}>
-              Toshkentdagi eng mazali shirinliklar va konfetlar do'koni.
+              Shahrisabzdagi eng mazali shirinliklar va konfetlar do'koni.
               Har kuni yangi mahsulotlar.
             </p>
             <a href="#products" className={styles.heroBtn}>
@@ -95,7 +95,7 @@ export default function Home({ products }: Props) {
               <div className={styles.contactInfo}>
                 <h2 className={styles.contactTitle}>Biz bilan bog'laning</h2>
                 <p className={styles.contactDesc}>
-                  Savollaringiz bormi? Biz har doim yordam berishga tayyormiz.
+                  Biror nima buyurtma bermoqchimisiz? Yoki savollaringiz bormi? Biz har doim yordam berishga tayyormiz.
                 </p>
 
                 <div className={styles.contactItems}>
@@ -166,7 +166,7 @@ export default function Home({ products }: Props) {
         <footer className={styles.footer}>
           <div className="container">
             <div className={styles.footerInner}>
-              <span>© 2024 Chocoa. Barcha huquqlar himoyalangan.</span>
+              <span>© 2026 Chocoanow. Barcha huquqlar himoyalangan.</span>
               <div className={styles.footerLinks}>
                 <a href="tel:+998993413373">+998 99 341 33 73</a>
                 <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer">Telegram</a>
