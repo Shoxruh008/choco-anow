@@ -45,7 +45,7 @@ export default function Home({ products }: Props) {
               <span className={styles.logoIcon}>🍫</span>
               <div>
                 <span className={styles.logoText}>Chocoanow</span>
-                <span className={styles.logoSub}>Shirinliklar Do'koni</span>
+                <span className={styles.logoSub}>Strawberry Chocolate</span>
               </div>
             </div>
             <nav className={styles.nav}>
