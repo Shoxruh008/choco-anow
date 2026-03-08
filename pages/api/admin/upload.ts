@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const [, files] = await form.parse(req);
     const fileField = files.file;
-    const file: File = Array.isArray(fileField) ? fileField[0] : fileField as File;
+    const file = Array.isArray(fileField) ? fileField[0] : (fileField as unknown as File);
 
     if (!file) {
       return res.status(400).json({ message: 'Fayl topilmadi' });
