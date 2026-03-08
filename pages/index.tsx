@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import { useState, useEffect, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
 import { supabase, Product } from '../lib/supabase';
 import { formatPrice } from '../lib/format';
@@ -10,17 +11,34 @@ type Props = {
 };
 
 export default function Home({ products }: Props) {
+  const [lightbox, setLightbox] = useState<Product | null>(null);
+
+  const closeLightbox = useCallback(() => setLightbox(null), []);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') closeLightbox();
+    }
+    if (lightbox) {
+      document.addEventListener('keydown', onKey);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [lightbox, closeLightbox]);
+
   return (
     <>
       <Head>
-        <title>Chocoanow — Shirinliklar Do'koni</title>
+        <title>Chocoa — Shirinliklar Do'koni</title>
         <meta name="description" content="Eng mazali shirinliklar va konfetlar. Sinabog' 16 etajlik dom." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className={styles.page}>
-        {/* HEADER */}
         <header className={styles.header}>
           <div className={`container ${styles.headerInner}`}>
             <div className={styles.logo}>
@@ -40,7 +58,6 @@ export default function Home({ products }: Props) {
           </div>
         </header>
 
-        {/* HERO */}
         <section className={styles.hero}>
           <div className={`container ${styles.heroContent}`}>
             <p className={styles.heroLabel}>Eng sifatli shirinliklar</p>
@@ -49,7 +66,7 @@ export default function Home({ products }: Props) {
               <em>shirin bo'lsin</em>
             </h1>
             <p className={styles.heroDesc}>
-              Shahrisabzdagi eng mazali shirinliklar va konfetlar do'koni.
+              Toshkentdagi eng mazali shirinliklar va konfetlar do'koni.
               Har kuni yangi mahsulotlar.
             </p>
             <a href="#products" className={styles.heroBtn}>
@@ -65,14 +82,12 @@ export default function Home({ products }: Props) {
           </div>
         </section>
 
-        {/* PRODUCTS */}
         <section id="products" className={styles.products}>
           <div className="container">
             <div className={styles.sectionHead}>
               <h2 className={styles.sectionTitle}>Mahsulotlar Katalogi</h2>
               <p className={styles.sectionDesc}>Barcha mahsulotlar yuqori sifat nazoratidan o'tgan</p>
             </div>
-
             {products.length === 0 ? (
               <div className={styles.empty}>
                 <span>🍬</span>
@@ -81,23 +96,21 @@ export default function Home({ products }: Props) {
             ) : (
               <div className={styles.grid}>
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product.id} product={product} onImageClick={setLightbox} />
                 ))}
               </div>
             )}
           </div>
         </section>
 
-        {/* CONTACT */}
         <section id="contact" className={styles.contact}>
           <div className="container">
             <div className={styles.contactGrid}>
               <div className={styles.contactInfo}>
                 <h2 className={styles.contactTitle}>Biz bilan bog'laning</h2>
                 <p className={styles.contactDesc}>
-                  Biror nima buyurtma bermoqchimisiz? Yoki savollaringiz bormi? Biz har doim yordam berishga tayyormiz.
+                  Savollaringiz bormi? Biz har doim yordam berishga tayyormiz.
                 </p>
-
                 <div className={styles.contactItems}>
                   <a href="tel:+998993413373" className={styles.contactItem}>
                     <div className={styles.contactIcon}>
@@ -110,7 +123,6 @@ export default function Home({ products }: Props) {
                       <span className={styles.contactValue}>+998 99 341 33 73</span>
                     </div>
                   </a>
-
                   <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer" className={styles.contactItem}>
                     <div className={styles.contactIcon}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -122,7 +134,6 @@ export default function Home({ products }: Props) {
                       <span className={styles.contactValue}>@Chocoanoww</span>
                     </div>
                   </a>
-
                   <div className={styles.contactItem}>
                     <div className={styles.contactIcon}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -137,8 +148,6 @@ export default function Home({ products }: Props) {
                   </div>
                 </div>
               </div>
-
-              {/* MAP */}
               <div className={styles.mapWrapper}>
                 <iframe
                   title="Do'kon joylashuvi"
@@ -147,10 +156,10 @@ export default function Home({ products }: Props) {
                   style={{ border: 0, borderRadius: '16px' }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=66.8202%2C39.0884%2C66.8323%2C39.0985&layer=mapnik&marker=39.09345365369711%2C66.82627899999999`}
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=66.8202%2C39.0884%2C66.8323%2C39.0985&layer=mapnik&marker=39.09345365369711%2C66.82627899999999"
                 />
                 <a
-                  href={`https://www.google.com/maps?q=39.09345365369711,66.82627899999999`}
+                  href="https://www.google.com/maps?q=39.09345365369711,66.82627899999999"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.mapLink}
@@ -162,11 +171,10 @@ export default function Home({ products }: Props) {
           </div>
         </section>
 
-        {/* FOOTER */}
         <footer className={styles.footer}>
           <div className="container">
             <div className={styles.footerInner}>
-              <span>© 2026 Chocoanow. Barcha huquqlar himoyalangan.</span>
+              <span>© 2024 Chocoa. Barcha huquqlar himoyalangan.</span>
               <div className={styles.footerLinks}>
                 <a href="tel:+998993413373">+998 99 341 33 73</a>
                 <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer">Telegram</a>
@@ -175,11 +183,56 @@ export default function Home({ products }: Props) {
           </div>
         </footer>
       </div>
+
+      {/* LIGHTBOX */}
+      {lightbox && (
+        <div className={styles.lightboxOverlay} onClick={closeLightbox}>
+          <button className={styles.lightboxClose} onClick={closeLightbox} aria-label="Yopish">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+            {lightbox.image_url && (
+              <div className={styles.lightboxImageWrap}>
+                <Image
+                  src={lightbox.image_url}
+                  alt={lightbox.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  style={{ objectFit: 'contain' }}
+                  priority
+                />
+              </div>
+            )}
+            <div className={styles.lightboxInfo}>
+              <h3 className={styles.lightboxName}>{lightbox.name}</h3>
+              {lightbox.description && (
+                <p className={styles.lightboxDesc}>{lightbox.description}</p>
+              )}
+              <div className={styles.lightboxPrices}>
+                {lightbox.price && (
+                  <span className={styles.lightboxPrice}>{formatPrice(lightbox.price)}</span>
+                )}
+                {lightbox.old_price && (
+                  <span className={styles.lightboxOldPrice}>{formatPrice(lightbox.old_price)}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({
+  product,
+  onImageClick,
+}: {
+  product: Product;
+  onImageClick: (p: Product) => void;
+}) {
   const hasDiscount = product.old_price && product.price && product.old_price > product.price;
   const discountPercent = hasDiscount
     ? Math.round((1 - product.price! / product.old_price!) * 100)
@@ -187,7 +240,11 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className={styles.card}>
-      <div className={styles.cardImageWrapper}>
+      <div
+        className={styles.cardImageWrapper}
+        onClick={() => product.image_url && onImageClick(product)}
+        style={{ cursor: product.image_url ? 'zoom-in' : 'default' }}
+      >
         {product.image_url ? (
           <Image
             src={product.image_url}
@@ -205,8 +262,15 @@ function ProductCard({ product }: { product: Product }) {
         {discountPercent && (
           <div className={styles.discountBadge}>-{discountPercent}%</div>
         )}
+        {product.image_url && (
+          <div className={styles.cardZoomHint}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </div>
+        )}
       </div>
-
       <div className={styles.cardBody}>
         <h3 className={styles.cardName}>{product.name}</h3>
         {product.description && (
