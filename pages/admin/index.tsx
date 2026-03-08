@@ -1,98 +1,308 @@
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
-import styles from '../../styles/AdminLogin.module.css';
+import Image from 'next/image';
+import { useState, useEffect, useCallback } from 'react';
+import { GetServerSideProps } from 'next';
+import { supabase, Product } from '../lib/supabase';
+import { formatPrice } from '../lib/format';
+import styles from '../styles/Home.module.css';
 
-export default function AdminLogin() {
-  const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+type Props = {
+  products: Product[];
+};
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+export default function Home({ products }: Props) {
+  const [lightbox, setLightbox] = useState<Product | null>(null);
 
-    try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
+  const closeLightbox = useCallback(() => setLightbox(null), []);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || 'Login xato');
-        return;
-      }
-
-      // Token ni localStorage ga saqlash
-      localStorage.setItem('admin_token', data.token);
-      router.push('/admin/dashboard');
-    } catch {
-      setError('Serverga ulanishda xato');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') closeLightbox();
     }
-  }
+    if (lightbox) {
+      document.addEventListener('keydown', onKey);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [lightbox, closeLightbox]);
 
   return (
     <>
       <Head>
-        <title>Admin Panel — Chocoa</title>
+        <title>Chocoa — Shirinliklar Do'koni</title>
+        <meta name="description" content="Eng mazali shirinliklar va konfetlar. Sinabog' 16 etajlik dom." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <div className={styles.page}>
-        <div className={styles.card}>
-          <div className={styles.logo}>
-            <span>🍫</span>
-            <h1>Admin Panel</h1>
-            <p>Chocoa Do'koni</p>
+        <header className={styles.header}>
+          <div className={`container ${styles.headerInner}`}>
+            <div className={styles.logo}>
+              <span className={styles.logoIcon}>🍫</span>
+              <div>
+                <span className={styles.logoText}>Chocoa</span>
+                <span className={styles.logoSub}>Shirinliklar Do'koni</span>
+              </div>
+            </div>
+            <nav className={styles.nav}>
+              <a href="#products">Mahsulotlar</a>
+              <a href="#contact">Aloqa</a>
+              <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer" className={styles.navTg}>
+                Telegram
+              </a>
+            </nav>
           </div>
+        </header>
 
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.field}>
-              <label htmlFor="username">Login</label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Admin login"
-                required
-                autoComplete="username"
-              />
+        <section className={styles.hero}>
+          <div className={`container ${styles.heroContent}`}>
+            <p className={styles.heroLabel}>Eng sifatli shirinliklar</p>
+            <h1 className={styles.heroTitle}>
+              Har bir lahza<br />
+              <em>shirin bo'lsin</em>
+            </h1>
+            <p className={styles.heroDesc}>
+              Toshkentdagi eng mazali shirinliklar va konfetlar do'koni.
+              Har kuni yangi mahsulotlar.
+            </p>
+            <a href="#products" className={styles.heroBtn}>
+              Mahsulotlarni ko'rish
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+              </svg>
+            </a>
+          </div>
+          <div className={styles.heroDecor}>
+            <div className={styles.heroCircle1} />
+            <div className={styles.heroCircle2} />
+          </div>
+        </section>
+
+        <section id="products" className={styles.products}>
+          <div className="container">
+            <div className={styles.sectionHead}>
+              <h2 className={styles.sectionTitle}>Mahsulotlar Katalogi</h2>
+              <p className={styles.sectionDesc}>Barcha mahsulotlar yuqori sifat nazoratidan o'tgan</p>
             </div>
+            {products.length === 0 ? (
+              <div className={styles.empty}>
+                <span>🍬</span>
+                <p>Hozircha mahsulotlar yo'q</p>
+              </div>
+            ) : (
+              <div className={styles.grid}>
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} onImageClick={setLightbox} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
 
-            <div className={styles.field}>
-              <label htmlFor="password">Parol</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-              />
+        <section id="contact" className={styles.contact}>
+          <div className="container">
+            <div className={styles.contactGrid}>
+              <div className={styles.contactInfo}>
+                <h2 className={styles.contactTitle}>Biz bilan bog'laning</h2>
+                <p className={styles.contactDesc}>
+                  Savollaringiz bormi? Biz har doim yordam berishga tayyormiz.
+                </p>
+                <div className={styles.contactItems}>
+                  <a href="tel:+998993413373" className={styles.contactItem}>
+                    <div className={styles.contactIcon}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.12 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012.23 1.27h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.11a16 16 0 006 6l1.27-.56a2 2 0 012.11.45c.907.339 1.85.573 2.81.7A2 2 0 0121.23 18z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <span className={styles.contactLabel}>Telefon</span>
+                      <span className={styles.contactValue}>+998 99 341 33 73</span>
+                    </div>
+                  </a>
+                  <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer" className={styles.contactItem}>
+                    <div className={styles.contactIcon}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <span className={styles.contactLabel}>Telegram Kanal</span>
+                      <span className={styles.contactValue}>@Chocoanoww</span>
+                    </div>
+                  </a>
+                  <div className={styles.contactItem}>
+                    <div className={styles.contactIcon}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <span className={styles.contactLabel}>Manzil</span>
+                      <span className={styles.contactValue}>Sinabog' 16 etajlik dom<br/>(Oqshom ko'chasi 1)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.mapWrapper}>
+                <iframe
+                  title="Do'kon joylashuvi"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, borderRadius: '16px' }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=66.8202%2C39.0884%2C66.8323%2C39.0985&layer=mapnik&marker=39.09345365369711%2C66.82627899999999"
+                />
+                <a
+                  href="https://www.google.com/maps?q=39.09345365369711,66.82627899999999"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.mapLink}
+                >
+                  Google Maps da ko'rish →
+                </a>
+              </div>
             </div>
+          </div>
+        </section>
 
-            {error && <div className={styles.error}>{error}</div>}
-
-            <button type="submit" className={styles.btn} disabled={loading}>
-              {loading ? (
-                <span className={styles.spinner} />
-              ) : (
-                'Kirish'
-              )}
-            </button>
-          </form>
-
-          <a href="/" className={styles.backLink}>← Saytga qaytish</a>
-        </div>
+        <footer className={styles.footer}>
+          <div className="container">
+            <div className={styles.footerInner}>
+              <span>© 2024 Chocoa. Barcha huquqlar himoyalangan.</span>
+              <div className={styles.footerLinks}>
+                <a href="tel:+998993413373">+998 99 341 33 73</a>
+                <a href="https://t.me/Chocoanoww" target="_blank" rel="noopener noreferrer">Telegram</a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
+
+      {/* LIGHTBOX */}
+      {lightbox && (
+        <div className={styles.lightboxOverlay} onClick={closeLightbox}>
+          <button className={styles.lightboxClose} onClick={closeLightbox} aria-label="Yopish">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+            {lightbox.image_url && (
+              <div className={styles.lightboxImageWrap}>
+                <Image
+                  src={lightbox.image_url}
+                  alt={lightbox.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  style={{ objectFit: 'contain' }}
+                  priority
+                />
+              </div>
+            )}
+            <div className={styles.lightboxInfo}>
+              <h3 className={styles.lightboxName}>{lightbox.name}</h3>
+              {lightbox.description && (
+                <p className={styles.lightboxDesc}>{lightbox.description}</p>
+              )}
+              <div className={styles.lightboxPrices}>
+                {lightbox.price && (
+                  <span className={styles.lightboxPrice}>{formatPrice(lightbox.price)}</span>
+                )}
+                {lightbox.old_price && (
+                  <span className={styles.lightboxOldPrice}>{formatPrice(lightbox.old_price)}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
+
+function ProductCard({
+  product,
+  onImageClick,
+}: {
+  product: Product;
+  onImageClick: (p: Product) => void;
+}) {
+  const hasDiscount = product.old_price && product.price && product.old_price > product.price;
+  const discountPercent = hasDiscount
+    ? Math.round((1 - product.price! / product.old_price!) * 100)
+    : null;
+
+  return (
+    <div className={styles.card}>
+      <div
+        className={styles.cardImageWrapper}
+        onClick={() => product.image_url && onImageClick(product)}
+        style={{ cursor: product.image_url ? 'zoom-in' : 'default' }}
+      >
+        {product.image_url ? (
+          <Image
+            src={product.image_url}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className={styles.cardImage}
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <div className={styles.cardNoImage}>
+            <span>🍫</span>
+          </div>
+        )}
+        {discountPercent && (
+          <div className={styles.discountBadge}>-{discountPercent}%</div>
+        )}
+        {product.image_url && (
+          <div className={styles.cardZoomHint}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </div>
+        )}
+      </div>
+      <div className={styles.cardBody}>
+        <h3 className={styles.cardName}>{product.name}</h3>
+        {product.description && (
+          <p className={styles.cardDesc}>{product.description}</p>
+        )}
+        <div className={styles.cardPrices}>
+          {product.price && (
+            <span className={styles.cardPrice}>{formatPrice(product.price)}</span>
+          )}
+          {product.old_price && (
+            <span className={styles.cardOldPrice}>{formatPrice(product.old_price)}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data: products, error } = await supabase
+    .from('products')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Products fetch error:', error);
+    return { props: { products: [] } };
+  }
+
+  return {
+    props: {
+      products: products || [],
+    },
+  };
+};
