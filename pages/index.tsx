@@ -32,8 +32,8 @@ export default function Home({ products }: Props) {
   return (
     <>
       <Head>
-        <title>Chocoa — Shirinliklar Do'koni</title>
-        <meta name="description" content="Eng mazali shirinliklar va konfetlar. Sinabog' 16 etajlik dom." />
+        <title>Chocoanow — Strawberry Chocolate</title>
+        <meta name="description" content="Eng mazali klubnika va shirinliklar. Sinabog' 16 etajlik dom." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -60,13 +60,13 @@ export default function Home({ products }: Props) {
 
         <section className={styles.hero}>
           <div className={`container ${styles.heroContent}`}>
-            <p className={styles.heroLabel}>Eng sifatli shirinliklar</p>
+            <p className={styles.heroLabel}>Eng sifatli klubnikalar</p>
             <h1 className={styles.heroTitle}>
               Har bir lahza<br />
               <em>shirin bo'lsin</em>
             </h1>
             <p className={styles.heroDesc}>
-              Toshkentdagi eng mazali shirinliklar va konfetlar do'koni.
+              Shahrisabzdagi eng mazali klubnika va shirinliklar do'koni.
               Har kuni yangi mahsulotlar.
             </p>
             <a href="#products" className={styles.heroBtn}>
@@ -109,7 +109,7 @@ export default function Home({ products }: Props) {
               <div className={styles.contactInfo}>
                 <h2 className={styles.contactTitle}>Biz bilan bog'laning</h2>
                 <p className={styles.contactDesc}>
-                  Savollaringiz bormi? Biz har doim yordam berishga tayyormiz.
+                  Buyurtma bermoqchimisiz? Yoki savollaringiz bormi? Biz har doim aloqadamiz.
                 </p>
                 <div className={styles.contactItems}>
                   <a href="tel:+998993413373" className={styles.contactItem}>
