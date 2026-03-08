@@ -638,3 +638,209 @@ a.contactItem:hover {
     margin-left: 0;
   }
 }
+
+/* ===== IMG COUNT BADGE ===== */
+.imgCount {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ===== LIGHTBOX SLIDER ===== */
+.lbPrev, .lbNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 5;
+}
+
+.lbPrev { left: 12px; }
+.lbNext { right: 12px; }
+
+.lbPrev:hover, .lbNext:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+.lbDots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.lbDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.lbDotActive {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+/* ===== PROMO SECTION ===== */
+.promoSection {
+  padding: 0 0 80px;
+}
+
+.promoCard {
+  background: linear-gradient(135deg, var(--chocolate) 0%, var(--brown) 100%);
+  border-radius: 28px;
+  padding: 48px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  overflow: hidden;
+  position: relative;
+}
+
+.promoCard::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  top: -100px;
+  right: 200px;
+  pointer-events: none;
+}
+
+.promoLeft {
+  flex: 1;
+  max-width: 560px;
+}
+
+.promoTag {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+}
+
+.promoTitle {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 14px;
+  line-height: 1.25;
+}
+
+.promoText {
+  font-size: 15px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.75;
+  margin-bottom: 28px;
+}
+
+.promoBtns {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.promoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: var(--chocolate);
+  padding: 12px 22px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.promoBtn:hover {
+  background: #f0b84a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232,168,66,0.4);
+}
+
+.promoBtnSecondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 22px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  color: white;
+  transition: all 0.2s;
+}
+
+.promoBtnSecondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.5);
+}
+
+.promoRight {
+  flex-shrink: 0;
+}
+
+.promoEmojis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.promoEmojis span {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 768px) {
+  .promoCard {
+    padding: 32px 24px;
+    flex-direction: column;
+  }
+  .promoRight { display: none; }
+  .lbPrev, .lbNext { width: 36px; height: 36px; }
+}

@@ -12,6 +12,10 @@ export type Product = {
   price: number | null;
   old_price: number | null;
   image_url: string | null;
+  image_url_2: string | null;
+  image_url_3: string | null;
+  image_url_4: string | null;
+  image_url_5: string | null;
   created_at: string;
   updated_at: string;
 };

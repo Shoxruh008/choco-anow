@@ -627,3 +627,95 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== 5 RASM ===== */
+.imagesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.imagesLabel {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+}
+
+.imagesGrid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.imgSlot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.imgPreview {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  border: 2px dashed var(--border);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: var(--cream);
+  transition: border-color 0.2s;
+}
+
+.imgPreview:hover {
+  border-color: var(--caramel);
+}
+
+.imgPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--text-light);
+  font-size: 10px;
+  text-align: center;
+  padding: 4px;
+}
+
+.imgRemove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+}
+
+.thumbRow {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.thumbWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cream);
+  position: relative;
+  flex-shrink: 0;
+}
